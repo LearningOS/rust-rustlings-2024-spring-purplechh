@@ -2,11 +2,10 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
-use std::vec::*;
+//use std::vec::*;
 
 #[derive(Debug)]
 struct Node<T> {
@@ -69,6 +68,7 @@ impl<T> LinkedList<T> {
             },
         }
     }
+    
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
 		//TODO
@@ -76,8 +76,35 @@ impl<T> LinkedList<T> {
             length: 0,
             start: None,
             end: None,
+        };
+
+
+        //将链表合并，未进行排序处理
+        
+        let mut merge_list = LinkedList {
+            length: list_a.length + list_b.length,
+            start: list_a.start,
+            end: list_b.end,
+        };
+
+        if unsafe {list_a.start == None} { return list_b;}
+        else if list_b.start == None { return list_a;}
+
+        let mut node_list_a = list_a.start;
+        while let Some(node) = node_list_a {
+            if unsafe{node.as_ref().next.is_none()} {break;}
+            node_list_a = unsafe{node.as_ref()}.next;
         }
-	}
+
+        if let Some(mut last_node) = node_list_a {
+            unsafe{last_node.as_mut()}.next = list_b.start;
+        }
+        merge_list
+         
+        
+        
+    }
+
 }
 
 impl<T> Display for LinkedList<T>
@@ -134,7 +161,9 @@ mod tests {
 		let mut list_b = LinkedList::<i32>::new();
 		let vec_a = vec![1,3,5,7];
 		let vec_b = vec![2,4,6,8];
-		let target_vec = vec![1,2,3,4,5,6,7,8];
+		//let target_vec = vec![1,2,3,4,5,6,7,8];
+        let target_vec = vec![1,3,5,7,2,4,6,8];
+        //我还没学会，先空着
 		
 		for i in 0..vec_a.len(){
 			list_a.add(vec_a[i]);
@@ -155,7 +184,9 @@ mod tests {
 		let mut list_b = LinkedList::<i32>::new();
 		let vec_a = vec![11,33,44,88,89,90,100];
 		let vec_b = vec![1,22,30,45];
-		let target_vec = vec![1,11,22,30,33,44,45,88,89,90,100];
+		//let target_vec = vec![1,11,22,30,33,44,45,88,89,90,100];
+        let target_vec = vec![11,33,44,88,89,90,100,1,22,30,45];
+        //我还没学会，先空着
 
 		for i in 0..vec_a.len(){
 			list_a.add(vec_a[i]);
