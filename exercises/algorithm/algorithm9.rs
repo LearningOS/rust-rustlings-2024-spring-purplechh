@@ -37,6 +37,32 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.count += 1;
+        self.items.push(value);
+        self.heapify_up(self.count);
+    }
+
+    fn heapify_up(&mut self, idx: usize) {
+        if idx == 1 {
+            return;
+        }
+        let parent_idx = self.parent_idx(idx);
+        if (self.comparator)(&self.items[idx], &self.items[parent_idx]) {
+            self.items.swap(idx, parent_idx);
+            self.heapify_up(parent_idx);
+        }
+    }
+
+    fn heapify_down(&mut self, idx: usize) {
+        if !self.children_present(idx) {
+            return;
+        }
+
+        let smallest_child_idx = self.smallest_child_idx(idx);
+        if (self.comparator)(&self.items[smallest_child_idx], &self.items[idx]) {
+            self.items.swap(smallest_child_idx, idx);
+            self.heapify_down(smallest_child_idx);
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,7 +83,15 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+		let left_idx = self.left_child_idx(idx);
+        let right_idx = self.right_child_idx(idx);
+        if right_idx > self.count {
+            left_idx
+        } else if (self.comparator)(&self.items[left_idx], &self.items[right_idx]) {
+            left_idx
+        } else {
+            right_idx
+        }
     }
 }
 
@@ -84,7 +118,14 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+		if self.is_empty() {
+            None
+        } else {
+            let result = self.items.swap_remove(1);
+            self.count -= 1;
+            self.heapify_down(1);
+            Some(result)
+        }
     }
 }
 
@@ -128,12 +169,12 @@ mod tests {
         heap.add(2);
         heap.add(9);
         heap.add(11);
-      //  assert_eq!(heap.len(), 4);
-      //  assert_eq!(heap.next(), Some(2));
-       // assert_eq!(heap.next(), Some(4));
-       // assert_eq!(heap.next(), Some(9));
+        assert_eq!(heap.len(), 4);
+        assert_eq!(heap.next(), Some(2));
+        assert_eq!(heap.next(), Some(4));
+        assert_eq!(heap.next(), Some(9));
         heap.add(1);
-       // assert_eq!(heap.next(), Some(1));
+        assert_eq!(heap.next(), Some(1));
     }
 
     #[test]
@@ -143,11 +184,11 @@ mod tests {
         heap.add(2);
         heap.add(9);
         heap.add(11);
-      //  assert_eq!(heap.len(), 4);
-       // assert_eq!(heap.next(), Some(11));
-       // assert_eq!(heap.next(), Some(9));
-       // assert_eq!(heap.next(), Some(4));
+        assert_eq!(heap.len(), 4);
+        assert_eq!(heap.next(), Some(11));
+        assert_eq!(heap.next(), Some(9));
+        assert_eq!(heap.next(), Some(4));
         heap.add(1);
-       // assert_eq!(heap.next(), Some(2));
+        assert_eq!(heap.next(), Some(2));
     }
 }

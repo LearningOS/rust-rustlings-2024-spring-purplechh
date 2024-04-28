@@ -29,6 +29,14 @@ impl Graph for UndirectedGraph {
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+        self.adjacency_table_mutable()
+            .entry(String::from(edge.0))
+            .or_insert(Vec::new())
+            .push((String::from(edge.1), edge.2));
+        self.adjacency_table_mutable()
+            .entry(String::from(edge.1))
+            .or_insert(Vec::new())
+            .push((String::from(edge.0), edge.2));
     }
 }
 pub trait Graph {
@@ -77,7 +85,7 @@ mod test_undirected_graph {
             (&String::from("c"), &String::from("b"), 10),
         ];
         for edge in expected_edges.iter() {
-           // assert_eq!(graph.edges().contains(edge), true);
+            assert_eq!(graph.edges().contains(edge), true);
         }
     }
 }

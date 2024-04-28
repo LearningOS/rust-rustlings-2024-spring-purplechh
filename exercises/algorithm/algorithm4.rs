@@ -50,19 +50,27 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
-        self.root = Some(Box::new(TreeNode::new(value)));
+
+        //self.root = Some(Box::new(TreeNode::new(value)));
+        match self.root {
+            Some(ref mut node) => node.insert(value),
+            None => self.root = Some(Box::new(TreeNode::new(value))),
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        true
-        /*
-        if Some(self.root.unwrap().value) == Some(value) {
-            return true;
-        }
-        else {return false;}
-         */ //没时间了，先留着
+        //true
+        let mut node = &self.root;
+        while let Some(n) = node {
+            match value.cmp(&n.value) {
+                Ordering::Less => node = &n.left,
+                Ordering::Greater => node = &n.right,
+                Ordering::Equal => return true,
+            }
+        } false
+
     }
 }
 
@@ -103,7 +111,7 @@ mod tests {
         let mut bst = BinarySearchTree::new();
 
         
-        //assert_eq!(bst.search(1), false);
+        assert_eq!(bst.search(1), false);
 
         
         bst.insert(5);
@@ -119,9 +127,8 @@ mod tests {
         assert_eq!(bst.search(2), true);
         assert_eq!(bst.search(4), true);
 
-        ////no time to do -chh
-        //assert_eq!(bst.search(1), false);
-        //assert_eq!(bst.search(6), false);
+        assert_eq!(bst.search(1), false);
+        assert_eq!(bst.search(6), false);
     }
 
     #[test]

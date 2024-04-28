@@ -31,7 +31,12 @@ impl<T> Stack<T> {
 	}
 	fn pop(&mut self) -> Option<T> {
 		// TODO
-		None
+		//None
+		let result = self.data.pop();
+        if let Some(_) = result {
+            self.size -= 1;
+        }
+        result
 	}
 	fn peek(&self) -> Option<&T> {
 		if 0 == self.size {
@@ -101,7 +106,39 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 fn bracket_match(bracket: &str) -> bool
 {
 	//TODO
-	true
+	//true
+	let mut stack:Stack<char> = Stack::new();
+    for c in bracket.chars() {
+        match c {
+            '(' | '[' | '{' => stack.push(c),
+            ')' => {
+                if let Some('(') = stack.peek() {
+                    stack.pop();
+                } else {
+                    return false;
+                }
+            },
+            ']' => {
+                if let Some('[') = stack.peek() {
+                    stack.pop();
+                } else {
+                    return false;
+                }
+            },
+            '}' => {
+                if let Some('{') = stack.peek() {
+                    stack.pop();
+                } else {
+                    return false;
+                }
+            },
+            _ => (),
+        }
+    }
+    if stack.is_empty() {
+        return true;
+    }
+    false
 }
 
 #[cfg(test)]
@@ -116,7 +153,7 @@ mod tests {
 	#[test]
 	fn bracket_matching_2(){
 		let s = "(2+3)*(3-1";
-		//assert_eq!(bracket_match(s),false);
+		assert_eq!(bracket_match(s),false);
 	}
 	#[test]
 	fn bracket_matching_3(){
@@ -126,12 +163,12 @@ mod tests {
 	#[test]
 	fn bracket_matching_4(){
 		let s = "{{(}[)]}";
-		//assert_eq!(bracket_match(s),false);
+		assert_eq!(bracket_match(s),false);
 	}
 	#[test]
 	fn bracket_matching_5(){
 		let s = "[[[]]]]]]]]]";
-		//assert_eq!(bracket_match(s),false);
+		assert_eq!(bracket_match(s),false);
 	}
 	#[test]
 	fn bracket_matching_6(){

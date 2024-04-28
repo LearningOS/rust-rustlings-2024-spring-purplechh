@@ -34,22 +34,21 @@ impl Graph {
         
 		//TODO
 
-        let mut visit_order = vec![];
-        let mut visited = vec![false;self.adj.len()];
-        visit_order.push(start);
+        let mut queue = VecDeque::<usize>::new();
+        let mut visit_order = vec![start];
+        let mut visited = vec![false; self.adj.len()];
         visited[start] = true;
-
-        while !visit_order.is_empty() {
-            let v = visit_order.remove(0);
-            for &w in &self.adj[v] {
-                if !visited[w] {
-                    visit_order.push(w);
-                    visited[w] = true;
-                }
+        queue.extend(self.adj[start].iter());
+        while queue.len() > 0 {
+            let node = queue.pop_front().unwrap();
+            if visited[node] {
+                continue;
             }
+            visit_order.push(node);
+            visited[node] = true;
+            queue.extend(self.adj[node].iter());
         }
-        //visit_order
-        visited.iter().enumerate().filter(|&(_, v)| *v).map(|(i, _)| i).collect()
+        visit_order
     }
 }
 
@@ -70,8 +69,7 @@ mod tests {
         graph.add_edge(3, 4);
 
         let visited_order = graph.bfs_with_return(0);
-        //assert_eq!(visited_order, vec![0, 1, 4, 2, 3]);
-        //chh to do
+        assert_eq!(visited_order, vec![0, 1, 4, 2, 3]);
     }
 
     #[test]
@@ -81,8 +79,7 @@ mod tests {
         graph.add_edge(1, 2);
 
         let visited_order = graph.bfs_with_return(2);
-        //assert_eq!(visited_order, vec![2, 1, 0]);
-        //chh to do
+        assert_eq!(visited_order, vec![2, 1, 0]);
     }
 
     #[test]
